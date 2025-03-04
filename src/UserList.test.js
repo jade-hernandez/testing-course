@@ -11,25 +11,27 @@ function renderComponent() {
   return { users };
 }
 
-test("render one row per user", () => {
-  // Render the component
-  renderComponent();
+describe("UserList", () => {
+  test("render one row per user", () => {
+    // Render the component
+    renderComponent();
 
-  // Find all the rows in the table
-  const rows = within(screen.getByTestId("users")).getAllByRole("row");
+    // Find all the rows in the table
+    const rows = within(screen.getByTestId("users")).getAllByRole("row");
 
-  // Assertion: correct number of rows in the table
-  expect(rows).toHaveLength(2);
-});
+    // Assertion: correct number of rows in the table
+    expect(rows).toHaveLength(2);
+  });
 
-test("render the email and name of each user", () => {
-  const { users } = renderComponent();
+  test("render the email and name of each user", () => {
+    const { users } = renderComponent();
 
-  for (let user of users) {
-    const name = screen.getByRole("cell", { name: user.name });
-    const email = screen.getByRole("cell", { name: user.email });
+    for (let user of users) {
+      const name = screen.getByRole("cell", { name: user.name });
+      const email = screen.getByRole("cell", { name: user.email });
 
-    expect(name).toBeInTheDocument();
-    expect(email).toBeInTheDocument();
-  }
+      expect(name).toBeInTheDocument();
+      expect(email).toBeInTheDocument();
+    }
+  });
 });
