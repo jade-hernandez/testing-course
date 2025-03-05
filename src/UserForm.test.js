@@ -2,62 +2,88 @@ import { render, screen } from "@testing-library/react";
 import user from "@testing-library/user-event";
 import UserForm from "./UserForm";
 
-test("it shows two inputs and a button", () => {
-  // render the component
-  render(<UserForm />);
+describe("UserForm", () => {
+  test("it renders", () => {
+    render(<UserForm />);
+  });
 
-  // Manipulate the component or find an element in it
-  const inputs = screen.getAllByRole("textbox");
-  const button = screen.getByRole("button");
+  test("it shows two inputs and a button", () => {
+    // render the component
+    render(<UserForm />);
 
-  // Assertion - make sure the component is doing
-  // what we expect it to do
-  expect(inputs).toHaveLength(2);
-  expect(button).toBeInTheDocument();
-});
+    // Manipulate the component or find an element in it
+    const inputs = screen.getAllByRole("textbox");
+    const button = screen.getByRole("button");
 
-test("it calls onUserAdd when the form is submitted", async () => {
-  const mock = jest.fn();
-  // Try to render my component
-  render(<UserForm onUserAdd={mock} />);
+    // Assertion - make sure the component is doing
+    // what we expect it to do
+    expect(inputs).toHaveLength(2);
+    expect(button).toBeInTheDocument();
+  });
 
-  // Find the two inputs
-  const nameInput = screen.getByRole("textbox", { name: /name/i });
-  const emailInput = screen.getByRole("textbox", { name: /email/i });
+  test("it shows a name input and an email input", () => {
+    // render the component
+    render(<UserForm />);
 
-  // Simulate typing in a name
-  await user.click(nameInput);
-  await user.keyboard("jane");
+    // Manipulate the component or find an element in it
+    const inputs = screen.getAllByRole("textbox");
+    // Input are "name" and "email"
+    const nameInput = screen.getByRole("textbox", { name: /^Name$/ });
+    const emailInput = screen.getByRole("textbox", { name: /^Email$/ });
 
-  // Simulate typing in an email
-  await user.click(emailInput);
-  await user.keyboard("jane@jane.com");
+    // Assertion - make sure the component is doing
+    // what we expect it to do
+    expect(inputs).toHaveLength(2);
+    expect(nameInput).toBeInTheDocument();
+    expect(emailInput).toBeInTheDocument();
+  });
 
-  // Find the button
-  const button = screen.getByRole("button");
+  test("it calls onUserAdd when the form is submitted", async () => {
+    const mockOnUserAdd = jest.fn();
+    // Try to render my component
+    render(<UserForm onUserAdd={mockOnUserAdd} />);
 
-  // Simulate clicking the button
-  await user.click(button);
+    // Find the two inputs
+    const nameInput = screen.getByRole("textbox", { name: /name/i });
+    const emailInput = screen.getByRole("textbox", { name: /email/i });
 
-  // Assertion to make sure 'onUserAdd' gets called with email/name
-  expect(mock).toHaveBeenCalled();
-  expect(mock).toHaveBeenCalledWith({ name: "jane", email: "jane@jane.com" });
-});
+    // Simulate typing in a name
+    await user.click(nameInput);
+    await user.keyboard("jane");
 
-test("empties the two inputs when form is submitted", () => {
-  render(<UserForm onUserAdd={() => {}} />);
+    // Simulate typing in an email
+    await user.click(emailInput);
+    await user.keyboard("jane@jane.com");
 
-  const nameInput = screen.getByRole("textbox", { name: /name/i });
-  const emailInput = screen.getByRole("textbox", { name: /email/i });
-  const button = screen.getByRole("button");
+    // Find the button
+    const button = screen.getByRole("button");
 
-  user.click(nameInput);
-  user.keyboard("jane");
-  user.click(emailInput);
-  user.keyboard("jane@jane.com");
+    // Simulate clicking the button
+    await user.click(button);
 
-  user.click(button);
+    // Assertion to make sure 'onUserAdd' gets called with email/name
+    expect(mockOnUserAdd).toHaveBeenCalled();
+    expect(mockOnUserAdd).toHaveBeenCalledWith({
+      name: "jane",
+      email: "jane@jane.com",
+    });
+  });
 
-  expect(nameInput).toHaveValue("");
-  expect(emailInput).toHaveValue("");
+  test("it empties the two inputs when form is submitted", () => {
+    render(<UserForm onUserAdd={() => {}} />);
+
+    const nameInput = screen.getByRole("textbox", { name: /name/i });
+    const emailInput = screen.getByRole("textbox", { name: /email/i });
+    const button = screen.getByRole("button");
+
+    user.click(nameInput);
+    user.keyboard("jane");
+    user.click(emailInput);
+    user.keyboard("jane@jane.com");
+
+    user.click(button);
+
+    expect(nameInput).toHaveValue("");
+    expect(emailInput).toHaveValue("");
+  });
 });
